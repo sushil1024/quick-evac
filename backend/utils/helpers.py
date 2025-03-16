@@ -1,8 +1,8 @@
 import os
 from flask import Flask
 from flask_cors import CORS
-from models import db
-from routes import all_blueprints
+from backend.models import db
+from backend.routes import all_blueprints
 
 def create_app(test_config=None):
     """
@@ -20,7 +20,7 @@ def create_app(test_config=None):
     # Load configuration
     if test_config is None:
         # Load the instance config, if it exists, when not testing
-        app.config.from_object('config.Config')
+        app.config.from_object('backend.config.Config')
     else:
         # Load the test config if passed in
         app.config.from_mapping(test_config)

@@ -1,14 +1,19 @@
 import googlemaps
 from math import radians, cos, sin, asin, sqrt
 from flask import current_app
-from models import db, UserLocation
+from backend.models import db, UserLocation
 
 class LocationService:
     """Service for handling location-related operations."""
     
     def __init__(self):
-        """Initialize the Google Maps client."""
-        self.gmaps = googlemaps.Client(key=current_app.config['GOOGLE_MAPS_API_KEY'])
+        """Initialize the service without directly accessing config."""
+        self.gmaps = None
+    
+    def _ensure_gmaps_client(self):
+        """Ensure Google Maps client is initialized when needed."""
+        if self.gmaps is None:
+            self.gmaps = googlemaps.Client(key=current_app.config['GOOGLE_MAPS_API_KEY'])
     
     def get_address_from_coordinates(self, latitude, longitude):
         """
@@ -22,6 +27,7 @@ class LocationService:
             str: Formatted address or None if not found
         """
         try:
+            self._ensure_gmaps_client()
             reverse_geocode_result = self.gmaps.reverse_geocode((latitude, longitude))
             if reverse_geocode_result:
                 return reverse_geocode_result[0]['formatted_address']
@@ -67,6 +73,7 @@ class LocationService:
             dict: Directions information
         """
         try:
+            self._ensure_gmaps_client()
             directions_result = self.gmaps.directions(
                 origin=f"{origin_lat},{origin_lng}",
                 destination=f"{destination_lat},{destination_lng}",

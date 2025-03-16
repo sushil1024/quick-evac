@@ -1,6 +1,6 @@
 from flask import current_app
-from models import db, Zone
-from .location_service import LocationService
+from backend.models import db, Zone
+from backend.services.location_service import LocationService
 
 class ZoneService:
     """Service for handling zone-related operations."""

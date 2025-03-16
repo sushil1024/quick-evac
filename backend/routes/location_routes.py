@@ -1,9 +1,9 @@
 from flask import request, jsonify, current_app
-from . import location_bp
-from models import db, UserLocation
-from services.location_service import LocationService
-from services.zone_service import ZoneService
-from services.sms_service import SMSService
+from backend.routes import location_bp
+from backend.models import db, UserLocation
+from backend.services.location_service import LocationService
+from backend.services.zone_service import ZoneService
+from backend.services.sms_service import SMSService
 
 # Initialize services
 location_service = LocationService()
@@ -43,6 +43,9 @@ def check_location():
         
         # Get address from coordinates
         address = location_service.get_address_from_coordinates(latitude, longitude)
+
+        print("User location: ", latitude, longitude, address)
+        print("Address: ", address)
         
         # Check if user is in a danger zone
         in_zone, zone = zone_service.is_in_zone(latitude, longitude)
@@ -80,16 +83,28 @@ def check_location():
                             'directions': directions
                         }
                     
+                    print("Sending SMS alert...")
+                    print("Phone number:", phone_number)
+                    print("Zone type:", zone.type)
+                    print("Current address:", address)
+                    print("Directions:", directions)
+                    
                     # Send SMS alert based on zone type
-                    sms_service.send_evacuation_alert(
-                        phone_number, 
-                        zone.type, 
-                        address, 
-                        directions
-                    )
+                    # sms_service.send_evacuation_alert(
+                    #     phone_number, 
+                    #     zone.type, 
+                    #     address, 
+                    #     directions
+                    # )
             elif zone.type == 'GREEN':
-                # Send a safety notification for green zones
-                sms_service.send_evacuation_alert(phone_number, zone.type, address)
+                print("Green zone, no evacuation needed...")
+                print("Phone number:", phone_number)
+                print("Zone type:", zone.type)
+                print("Current address:", address)
+
+
+                # # Send a safety notification for green zones
+                # sms_service.send_evacuation_alert(phone_number, zone.type, address)
         
         # Save user location to database
         user_location = location_service.save_user_location(

@@ -4,5 +4,5 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 # Import models after db is defined to avoid circular imports
-from .zone import Zone
-from .user_location import UserLocation
+from backend.models.zone import Zone
+from backend.models.user_location import UserLocation

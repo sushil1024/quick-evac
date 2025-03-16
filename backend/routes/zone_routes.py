@@ -1,7 +1,7 @@
 from flask import request, jsonify, current_app
-from . import zone_bp
-from models import Zone
-from services.zone_service import ZoneService
+from backend.routes import zone_bp
+from backend.models import Zone
+from backend.services.zone_service import ZoneService
 
 # Initialize the zone service
 zone_service = ZoneService()

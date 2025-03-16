@@ -1,4 +1,4 @@
-from . import db
+from backend.models import db
 from datetime import datetime
 
 class UserLocation(db.Model):

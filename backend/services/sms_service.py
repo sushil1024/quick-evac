@@ -5,12 +5,18 @@ class SMSService:
     """Service for sending SMS notifications using Twilio."""
     
     def __init__(self):
-        """Initialize the Twilio client."""
-        self.client = Client(
-            current_app.config['TWILIO_ACCOUNT_SID'],
-            current_app.config['TWILIO_AUTH_TOKEN']
-        )
-        self.from_number = current_app.config['TWILIO_PHONE_NUMBER']
+        """Initialize the service without immediately accessing config."""
+        self.client = None
+        self.from_number = None
+    
+    def _ensure_client(self):
+        """Ensure Twilio client is initialized when needed."""
+        if self.client is None:
+            self.client = Client(
+                current_app.config['TWILIO_ACCOUNT_SID'],
+                current_app.config['TWILIO_AUTH_TOKEN']
+            )
+            self.from_number = current_app.config['TWILIO_PHONE_NUMBER']
     
     def send_evacuation_alert(self, to_number, zone_type, current_address, directions=None):
         """
@@ -26,6 +32,9 @@ class SMSService:
             str: Message SID if sent successfully, None otherwise
         """
         try:
+            # Ensure client is initialized
+            self._ensure_client()
+            
             # Format the message based on zone type
             if zone_type == 'RED':
                 message_body = f"⚠️ EMERGENCY ALERT ⚠️\n\nYou are currently in a HIGH DANGER zone at: {current_address}. IMMEDIATE EVACUATION is required!"
